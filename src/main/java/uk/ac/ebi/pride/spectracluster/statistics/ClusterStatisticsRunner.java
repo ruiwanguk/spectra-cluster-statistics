@@ -1,5 +1,7 @@
 package uk.ac.ebi.pride.spectracluster.statistics;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.ebi.pride.spectracluster.clusteringfilereader.io.IClusterSourceListener;
 import uk.ac.ebi.pride.spectracluster.statistics.collect.ClusterStatisticsCollector;
 import uk.ac.ebi.pride.spectracluster.statistics.collect.OverallClusterStatisticsCollector;
@@ -26,6 +28,9 @@ import java.util.concurrent.Future;
  * @version $Id$
  */
 public class ClusterStatisticsRunner {
+
+    public static final Logger logger = LoggerFactory.getLogger(ClusterStatisticsRunner.class);
+
     // fixed sized thread pool that run 10 threads at a time
     private final ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
@@ -108,24 +113,40 @@ public class ClusterStatisticsRunner {
 
         // find all the .clustering files
         File[] clusteringFiles = inputDirectory.listFiles(new ClusteringFileFilter());
-
-
+        logger.info("Found {} clustering files", clusteringFiles.length);
 
         // prepare for output
-        PrintWriter overallStatisticWriter = new PrintWriter(new BufferedWriter(new FileWriter(overallStatisticsOutputFile)));
-        PrintWriter clusterStatisticWriter = new PrintWriter(new BufferedWriter(new FileWriter(clusterStatisticsOutputFile)));
+        PrintWriter overallStatisticWriter = null;
+        PrintWriter clusterStatisticWriter = null;
 
-        // statistics collector
-        ClusterStatisticsCollector clusterStatisticsCollector = new ClusterStatisticsCollector();
-        OverallClusterStatisticsCollector overallClusterStatisticsCollector = new OverallClusterStatisticsCollector(new OverallClusterStatistics());
+        try {
+            overallStatisticWriter = new PrintWriter(new BufferedWriter(new FileWriter(overallStatisticsOutputFile)));
+            clusterStatisticWriter = new PrintWriter(new BufferedWriter(new FileWriter(clusterStatisticsOutputFile)));
 
-        // statistics reporter
-        ClusterStatisticsReporter clusterStatisticsReporter = new ClusterStatisticsReporter(clusterStatisticWriter);
-        OverallStatisticsReporter overallStatisticsReporter = new OverallStatisticsReporter(overallStatisticWriter);
 
-        ClusterStatisticsRunner clusterStatisticsRunner = new ClusterStatisticsRunner(clusterStatisticsCollector,
-                overallClusterStatisticsCollector, clusterStatisticsReporter, overallStatisticsReporter);
+            // statistics collector
+            ClusterStatisticsCollector clusterStatisticsCollector = new ClusterStatisticsCollector();
+            OverallClusterStatisticsCollector overallClusterStatisticsCollector = new OverallClusterStatisticsCollector(new OverallClusterStatistics());
 
-        clusterStatisticsRunner.run(Arrays.asList(clusteringFiles));
+            // statistics reporter
+            ClusterStatisticsReporter clusterStatisticsReporter = new ClusterStatisticsReporter(clusterStatisticWriter);
+            OverallStatisticsReporter overallStatisticsReporter = new OverallStatisticsReporter(overallStatisticWriter);
+
+            ClusterStatisticsRunner clusterStatisticsRunner = new ClusterStatisticsRunner(clusterStatisticsCollector,
+                    overallClusterStatisticsCollector, clusterStatisticsReporter, overallStatisticsReporter);
+
+            clusterStatisticsRunner.run(Arrays.asList(clusteringFiles));
+
+            overallStatisticWriter.flush();
+            clusterStatisticWriter.flush();
+        } finally {
+            if (overallStatisticWriter != null)
+                overallStatisticWriter.close();
+
+            if (clusterStatisticWriter != null)
+                clusterStatisticWriter.close();
+        }
+
+        logger.info("Statistics has been collected");
     }
 }

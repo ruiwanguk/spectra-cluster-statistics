@@ -20,7 +20,7 @@ public class OverallStatisticsReporter implements IStatisticsReporter<OverallClu
     }
 
     @Override
-    public void report(OverallClusterStatistics stats) {
+    public void report(final OverallClusterStatistics stats) {
         try {
             // number of cluster
             long numberOfClusters = stats.getNumberOfClusters();

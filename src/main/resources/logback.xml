@@ -5,7 +5,7 @@
     </contextListener>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>log/spectra-cluster-importer.log</file>
+        <file>log/spectra-cluster-statistics.log</file>
 
         <encoder>
             <pattern>%msg%n</pattern>         `
