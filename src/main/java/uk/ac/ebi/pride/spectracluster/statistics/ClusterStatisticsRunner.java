@@ -109,6 +109,8 @@ public class ClusterStatisticsRunner {
         // find all the .clustering files
         File[] clusteringFiles = inputDirectory.listFiles(new ClusteringFileFilter());
 
+
+
         // prepare for output
         PrintWriter overallStatisticWriter = new PrintWriter(new BufferedWriter(new FileWriter(overallStatisticsOutputFile)));
         PrintWriter clusterStatisticWriter = new PrintWriter(new BufferedWriter(new FileWriter(clusterStatisticsOutputFile)));
