@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Main class to call to collect cluster statistics
@@ -58,7 +59,7 @@ public class ClusterStatisticsRunner {
         try {
             for (;;) {
                 // wait for one minute
-                Thread.sleep(60000l);
+                TimeUnit.MINUTES.sleep(1);
 
                 // remove all the completed tasks
                 Iterator<Future> iterator = taskResults.iterator();

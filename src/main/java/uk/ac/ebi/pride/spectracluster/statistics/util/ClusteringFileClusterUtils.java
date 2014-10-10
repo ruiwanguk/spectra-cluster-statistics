@@ -83,7 +83,8 @@ public final class ClusteringFileClusterUtils {
      * false means otherwise
      */
     public static boolean hasMultipleHighRankingPeptides(ClusteringFileCluster source) {
-        List<SequenceCount> sequenceCounts = source.getSequenceCounts();
+        // make a copy to avoid concurrent sorting by multiple threads
+        List<SequenceCount> sequenceCounts = new ArrayList<>(source.getSequenceCounts());
         if (sequenceCounts.size() <= 1) {
             return false;
         }
