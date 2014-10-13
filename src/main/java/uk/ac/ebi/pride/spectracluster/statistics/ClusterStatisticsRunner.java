@@ -13,14 +13,11 @@ import uk.ac.ebi.pride.spectracluster.statistics.report.OverallStatisticsReporte
 import uk.ac.ebi.pride.spectracluster.statistics.stat.OverallClusterStatistics;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Main class to call to collect cluster statistics
@@ -33,7 +30,7 @@ public class ClusterStatisticsRunner {
     public static final Logger logger = LoggerFactory.getLogger(ClusterStatisticsRunner.class);
 
     // fixed sized thread pool that run 10 threads at a time
-    private final ExecutorService threadPool = Executors.newFixedThreadPool(10);
+    private final ExecutorService threadPool = Executors.newFixedThreadPool(20);
 
     private final ClusterStatisticsCollector clusterStatisticsCollector;
     private final OverallClusterStatisticsCollector overallClusterStatisticsCollector;
@@ -54,28 +51,13 @@ public class ClusterStatisticsRunner {
     }
 
     public void run(List<File> clusteringFiles) {
-        List<Future> taskResults = submitTasks(clusteringFiles);
+        CountDownLatch countDown = new CountDownLatch(clusteringFiles.size());
+        submitTasks(clusteringFiles, countDown);
 
         try {
-            for (;;) {
-                // wait for one minute
-                TimeUnit.MINUTES.sleep(1);
-
-                // remove all the completed tasks
-                Iterator<Future> iterator = taskResults.iterator();
-                while(iterator.hasNext()) {
-                    if (iterator.next().isDone()) {
-                        iterator.remove();
-                    }
-                }
-
-                // check whether all the tasks have been completed
-                if (taskResults.size() == 0) {
-                    break;
-                }
-            }
+            countDown.await();
         } catch (InterruptedException e) {
-            throw new IllegalStateException("Cluster statistic runner was interrupted", e);
+            logger.warn("Program was interrupted", e);
         } finally {
             threadPool.shutdown();
         }
@@ -84,17 +66,12 @@ public class ClusterStatisticsRunner {
         overallStatisticsReporter.report(overallClusterStatistics);
     }
 
-    private List<Future> submitTasks(List<File> clusteringFiles) {
-        List<Future> taskResults = new ArrayList<>();
-
+    private void submitTasks(List<File> clusteringFiles, CountDownLatch countDown) {
         for (File clusteringFile : clusteringFiles) {
             ClusteringFileParsingExecutable clusteringFileParsingExecutable =
-                    new ClusteringFileParsingExecutable(clusteringFile, Arrays.asList((IClusterSourceListener) clusterSourceListener));
-            Future<Void> task = threadPool.submit(clusteringFileParsingExecutable);
-            taskResults.add(task);
+                    new ClusteringFileParsingExecutable(clusteringFile, Arrays.asList((IClusterSourceListener) clusterSourceListener), countDown);
+            threadPool.submit(clusteringFileParsingExecutable);
         }
-
-        return taskResults;
     }
 
     public static void main(String[] args) throws IOException {
