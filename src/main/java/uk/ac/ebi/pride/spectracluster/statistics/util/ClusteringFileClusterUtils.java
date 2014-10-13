@@ -121,8 +121,10 @@ public final class ClusteringFileClusterUtils {
 
             if (match) {
                 String specs = spectrumReference.getSpecies();
-                String[] specsParts = specs.split(",");
-                species.addAll(Arrays.asList(specsParts));
+                if (specs != null) {
+                    String[] specsParts = specs.split(",");
+                    species.addAll(Arrays.asList(specsParts));
+                }
             }
         }
 
@@ -151,8 +153,10 @@ public final class ClusteringFileClusterUtils {
 
         for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
             String specs = spectrumReference.getSpecies();
-            String[] specsParts = specs.split(",");
-            species.addAll(Arrays.asList(specsParts));
+            if (specs != null) {
+                String[] specsParts = specs.split(",");
+                species.addAll(Arrays.asList(specsParts));
+            }
         }
 
         return species;
