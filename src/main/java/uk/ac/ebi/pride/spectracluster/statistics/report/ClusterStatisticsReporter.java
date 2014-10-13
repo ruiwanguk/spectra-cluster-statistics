@@ -15,6 +15,44 @@ public class ClusterStatisticsReporter implements IStatisticsReporter<ClusterSta
 
     public static final String NOT_AVAILABLE = "NA";
 
+    /**
+     * Headers for the cluster statistics report
+     * NOTE: Please keep this updated if you have changed content of the report
+     * NOTE: The order of this enumeration is important, please keep the order in accordance of the output content
+     */
+    public static enum HEADER {
+        ID ("ID", "Cluster ID"),
+        AVG_PRECURSOR_MZ("AVG_PMZ", "Average precursor m/z for the cluster"),
+        AVG_PRECURSOR_CHARGE("AVG_PCHARGE", "Average precursor charge for the cluster"),
+        PRECURSOR_MZ_RANGE("PMZ_RANGE", "The range of the precursor m/z for the cluster"),
+        PRECURSOR_MZ_RANGE_HIGHEST("PMZ_RANGE_HIGHEST", "The range of the precursor m/z for the peptide with highest ratio within the cluster"),
+        MULTI_HIGHEST_PEPTIDES("MULTI_HIGHEST", "Whether there are multiple peptides that have the highest ratios"),
+        NUMBER_OF_SPECTRA("#SPECTRUM", "Total number of unique spectra within the cluster"),
+        NUMBER_OF_PROJECTS("#PROJECT", "Total number of unique projects within the cluster"),
+        NUMBER_OF_DISTINCT_PEPTIDES("#PEPTIDE", "Total number of unique peptide sequences within the cluster"),
+        NUMBER_OF_PSMS("#PSM", "Total number of PSMs within the cluster"),
+        NUMBER_OF_SPECIES("#SPECIES", "Total number of species within the cluster"),
+        NUMBER_OF_SPECIES_HIGHEST("#SPECIES_HIGHEST", "Total number of species for peptides that have the highest rations within the cluster"),
+        MAX_RATIO("MAX_RATIO", "The highest ratio within the cluster"),
+        PEPTIDE_HIGHEST("PEP_SEQ", "The peptide sequence for the peptide with the highest ratio within the cluster");
+
+        String header;
+        String description;
+
+        HEADER(String header, String description) {
+            this.header = header;
+            this.description = description;
+        }
+
+        public String getHeader() {
+            return header;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
+
     @GuardedBy("this")
     private final Appendable output;
 

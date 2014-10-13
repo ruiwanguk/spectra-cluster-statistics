@@ -8,6 +8,7 @@ import uk.ac.ebi.pride.spectracluster.statistics.collect.OverallClusterStatistic
 import uk.ac.ebi.pride.spectracluster.statistics.io.ClusteringFileFilter;
 import uk.ac.ebi.pride.spectracluster.statistics.io.ClusteringFileParsingExecutable;
 import uk.ac.ebi.pride.spectracluster.statistics.listener.ClusterSourceListener;
+import uk.ac.ebi.pride.spectracluster.statistics.report.ClusterStatisticsHeaderReporter;
 import uk.ac.ebi.pride.spectracluster.statistics.report.ClusterStatisticsReporter;
 import uk.ac.ebi.pride.spectracluster.statistics.report.OverallStatisticsReporter;
 import uk.ac.ebi.pride.spectracluster.statistics.stat.OverallClusterStatistics;
@@ -107,8 +108,12 @@ public class ClusterStatisticsRunner {
             OverallClusterStatisticsCollector overallClusterStatisticsCollector = new OverallClusterStatisticsCollector(new OverallClusterStatistics());
 
             // statistics reporter
+            ClusterStatisticsHeaderReporter clusterStatisticsHeaderReporter = new ClusterStatisticsHeaderReporter(clusterStatisticWriter);
             ClusterStatisticsReporter clusterStatisticsReporter = new ClusterStatisticsReporter(clusterStatisticWriter);
             OverallStatisticsReporter overallStatisticsReporter = new OverallStatisticsReporter(overallStatisticWriter);
+
+            // write out header
+            clusterStatisticsHeaderReporter.report(null);
 
             ClusterStatisticsRunner clusterStatisticsRunner = new ClusterStatisticsRunner(clusterStatisticsCollector,
                     overallClusterStatisticsCollector, clusterStatisticsReporter, overallStatisticsReporter);
