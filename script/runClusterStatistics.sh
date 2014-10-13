@@ -11,7 +11,7 @@ CLUSTER_STAT_OUTPUT_FILE=$3
 # the name to give to the LSF job (to be extended with additional info)
 JOB_NAME="PRIDE-CLUSTER-STATISTICS"
 # memory limit in MGb
-MEMORY_LIMIT=10000
+MEMORY_LIMIT=20000
 # executable jar file
 EXE_JAR=${project.build.finalName}.jar
 
