@@ -48,7 +48,8 @@ public class ClusterStatisticsRunner {
         this.overallClusterStatisticsCollector = overallClusterStatisticsCollector;
         this.clusterStatisticsReporter = clusterStatisticsReporter;
         this.overallStatisticsReporter = overallStatisticsReporter;
-        this.clusterSourceListener = new ClusterSourceListener(clusterStatisticsCollector, overallClusterStatisticsCollector, clusterStatisticsReporter);
+        this.clusterSourceListener = new ClusterSourceListener(this.clusterStatisticsCollector,
+                                                this.overallClusterStatisticsCollector, this.clusterStatisticsReporter);
     }
 
     public void run(List<File> clusteringFiles) {
