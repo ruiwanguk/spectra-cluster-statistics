@@ -28,16 +28,17 @@ public class ClusteringFileClusterUtilsTest {
         assertTrue(clusterReliable);
     }
 
+
     @Test
     public void testGetAveragePrecursorCharge() throws Exception {
-        float averagePrecursorCharge = ClusteringFileClusterUtils.getAveragePrecursorCharge(cluster);
-        assertEquals(2.0f, averagePrecursorCharge, 0.0001);
+        int averagePrecursorCharge = ClusteringFileClusterUtils.getAveragePrecursorCharge(cluster);
+        assertEquals(3, averagePrecursorCharge);
     }
 
     @Test
     public void testGetPrecursorMzRangeForHighRatioPeptide() throws Exception {
         float precursorMzRangeForHighRatioPeptide = ClusteringFileClusterUtils.getPrecursorMzRangeForHighRatioPeptide(cluster);
-        assertEquals(1.0f, precursorMzRangeForHighRatioPeptide, 0.0001);
+        assertEquals(2.0f, precursorMzRangeForHighRatioPeptide, 0.0001);
     }
 
     @Test
@@ -55,7 +56,7 @@ public class ClusteringFileClusterUtilsTest {
     @Test
     public void testGetNumberOfSpecies() throws Exception {
         int numberOfSpecies = ClusteringFileClusterUtils.getNumberOfSpecies(cluster);
-        assertEquals(4, numberOfSpecies);
+        assertEquals(5, numberOfSpecies);
     }
 
     @Test
@@ -87,5 +88,59 @@ public class ClusteringFileClusterUtilsTest {
         assertEquals(10, spectrumIds.size());
 
         assertThat(spectrumIds, hasItem("PRD000524;PRIDE_Exp_Complete_Ac_18469.xml;spectrum=8564"));
+    }
+
+    @Test
+    public void testGetAveragePrecursorChargeForHighRatioPeptide() throws Exception {
+        int averagePrecursorChargeForHighRatioPeptide = ClusteringFileClusterUtils.getAveragePrecursorChargeForHighRatioPeptide(cluster);
+        assertEquals(2, averagePrecursorChargeForHighRatioPeptide);
+    }
+
+    @Test
+    public void testGetAveragePrecursorMzForHighRatioPeptide() throws Exception {
+        float averagePrecursorMzForHighRatioPeptide = ClusteringFileClusterUtils.getAveragePrecursorMzForHighRatioPeptide(cluster);
+        assertEquals(4564.594, averagePrecursorMzForHighRatioPeptide, 0.001);
+    }
+
+    @Test
+    public void testGetMaxPrecursorCharge() throws Exception {
+        int maxPrecursorCharge = ClusteringFileClusterUtils.getMaxPrecursorCharge(cluster);
+        assertEquals(12, maxPrecursorCharge);
+    }
+
+    @Test
+    public void testGetMinPrecursorCharge() throws Exception {
+        int minPrecursorCharge = ClusteringFileClusterUtils.getMinPrecursorCharge(cluster);
+        assertEquals(1, minPrecursorCharge);
+    }
+
+    @Test
+    public void testGetMaxPrecursorMz() throws Exception {
+        float maxPrecursorMz = ClusteringFileClusterUtils.getMaxPrecursorMz(cluster);
+        assertEquals(4565.594, maxPrecursorMz, 0.001);
+    }
+
+    @Test
+    public void testGetMinPrecursorMz() throws Exception {
+        float minPrecursorMz = ClusteringFileClusterUtils.getMinPrecursorMz(cluster);
+        assertEquals(4563.594, minPrecursorMz, 0.001);
+    }
+
+    @Test
+    public void testGetMaxPrecursorMzForHighRatioPeptide() throws Exception {
+        float maxPrecursorMz = ClusteringFileClusterUtils.getMaxPrecursorMzForHighRatioPeptide(cluster);
+        assertEquals(4565.594, maxPrecursorMz, 0.001);
+    }
+
+    @Test
+    public void testGetMinPrecursorMzForHighRatioPeptide() throws Exception {
+        float minPrecursorMz = ClusteringFileClusterUtils.getMinPrecursorMzForHighRatioPeptide(cluster);
+        assertEquals(4563.594, minPrecursorMz, 0.001);
+    }
+
+    @Test
+    public void testGetSpeciesOnPeptideWithHighRatio() throws Exception {
+        Set<String> speciesOnPeptideWithHighRatio = ClusteringFileClusterUtils.getSpeciesOnPeptideWithHighRatio(cluster);
+        assertEquals(4, speciesOnPeptideWithHighRatio.size());
     }
 }

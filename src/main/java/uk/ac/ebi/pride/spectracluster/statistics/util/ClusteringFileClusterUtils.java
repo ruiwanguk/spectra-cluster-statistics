@@ -17,19 +17,27 @@ public final class ClusteringFileClusterUtils {
 
     public static final int MINIMUM_RELIABLE_CLUSTER_SIZE = 10;
     public static final float MINIMUM_RELIABLE_RATIO = 0.7f;
+    public static final int MINIMUM_NUMBER_OF_PROJECTS = 2;
 
+    /**
+     * Check whether a cluster is reliable or not
+     * @param source    clustering file cluster
+     * @return  true means reliable, false means unreliable
+     */
     public static boolean isClusterReliable(ClusteringFileCluster source) {
-        return source.getSpecCount() >= MINIMUM_RELIABLE_CLUSTER_SIZE && source.getMaxRatio() >= MINIMUM_RELIABLE_RATIO;
+        return source.getSpecCount() >= MINIMUM_RELIABLE_CLUSTER_SIZE &&
+                source.getMaxRatio() >= MINIMUM_RELIABLE_RATIO &&
+                getNumberOfProjectsOnPeptideWithHighRatio(source) >= MINIMUM_NUMBER_OF_PROJECTS;
     }
 
     /**
-     * calculate the average precursor charge
+     * Calculate the average precursor charge
      *
      * @param source clustering file cluster
      * @return average precursor charge
      */
-    public static float getAveragePrecursorCharge(ClusteringFileCluster source) {
-        float sumOfCharge = 0.0f;
+    public static int getAveragePrecursorCharge(ClusteringFileCluster source) {
+        int sumOfCharge = 0;
 
         List<ISpectrumReference> spectrumReferences = source.getSpectrumReferences();
         for (ISpectrumReference spectrumReference : spectrumReferences) {
@@ -37,6 +45,55 @@ public final class ClusteringFileClusterUtils {
         }
 
         return sumOfCharge / spectrumReferences.size();
+    }
+
+
+    /**
+     * Calculate the average precursor charge for peptides with highest ratio
+     *
+     * @param source clustering file cluster
+     * @return average precursor charge
+     */
+    public static int getAveragePrecursorChargeForHighRatioPeptide(ClusteringFileCluster source) {
+        int sumOfCharge = 0;
+        int spectrumCount = 0;
+        String maxSequence = source.getMaxSequence();
+
+        List<ISpectrumReference> spectrumReferences = source.getSpectrumReferences();
+        for (ISpectrumReference spectrumReference : spectrumReferences) {
+            boolean match = containMaxSequence(maxSequence, spectrumReference);
+
+            if (match) {
+                sumOfCharge += spectrumReference.getCharge();
+                spectrumCount++;
+            }
+        }
+
+        return sumOfCharge / spectrumCount;
+    }
+
+    /**
+     * Calculate the average precursor m/z for peptides with highest ratio
+     *
+     * @param source clustering file cluster
+     * @return average precursor charge
+     */
+    public static float getAveragePrecursorMzForHighRatioPeptide(ClusteringFileCluster source) {
+        float sumOfMz = 0f;
+        int spectrumCount = 0;
+        String maxSequence = source.getMaxSequence();
+
+        List<ISpectrumReference> spectrumReferences = source.getSpectrumReferences();
+        for (ISpectrumReference spectrumReference : spectrumReferences) {
+            boolean match = containMaxSequence(maxSequence, spectrumReference);
+
+            if (match) {
+                sumOfMz += spectrumReference.getPrecursorMz();
+                spectrumCount++;
+            }
+        }
+
+        return sumOfMz / spectrumCount;
     }
 
     /**
@@ -51,14 +108,7 @@ public final class ClusteringFileClusterUtils {
         String maxSequence = source.getMaxSequence();
 
         for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
-            boolean match = false;
-            List<IPeptideSpectrumMatch> psms = spectrumReference.getPSMs();
-            for (IPeptideSpectrumMatch psm : psms) {
-                if (psm.getSequence().equals(maxSequence)) {
-                    match = true;
-                    break;
-                }
-            }
+            boolean match = containMaxSequence(maxSequence, spectrumReference);
 
             if (match) {
                 float precursorMz = spectrumReference.getPrecursorMz();
@@ -73,6 +123,179 @@ public final class ClusteringFileClusterUtils {
         }
 
         return maxMz - minMz;
+    }
+
+    /**
+     * Get the maximum precursor charge
+     *
+     * @param source clustering file cluster
+     * @return maximum precursor charge
+     */
+    public static int getMaxPrecursorCharge(ClusteringFileCluster source) {
+        int maxCharge = Integer.MIN_VALUE;
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            int charge = spectrumReference.getCharge();
+            if (charge > maxCharge) {
+                maxCharge = charge;
+            }
+        }
+
+        return maxCharge;
+    }
+
+    /**
+     * Get the minimum precursor charge
+     *
+     * @param source clustering file cluster
+     * @return minimum precursor charge
+     */
+    public static int getMinPrecursorCharge(ClusteringFileCluster source) {
+        int minCharge = Integer.MAX_VALUE;
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            int charge = spectrumReference.getCharge();
+            if (charge < minCharge) {
+                minCharge = charge;
+            }
+        }
+
+        return minCharge;
+    }
+
+    /**
+     * Get the maximum precursor m/z
+     *
+     * @param source clustering file cluster
+     * @return maximum precursor m/z
+     */
+    public static float getMaxPrecursorMz(ClusteringFileCluster source) {
+        float maxMz = Float.MIN_VALUE;
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            float mz = spectrumReference.getPrecursorMz();
+            if (mz > maxMz) {
+                maxMz = mz;
+            }
+        }
+
+        return maxMz;
+    }
+
+    /**
+     * Get the minimum precursor m/z
+     *
+     * @param source clustering file cluster
+     * @return minimum precursor m/z
+     */
+    public static float getMinPrecursorMz(ClusteringFileCluster source) {
+        float minMz = Float.MAX_VALUE;
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            float mz = spectrumReference.getPrecursorMz();
+            if (mz < minMz) {
+                minMz = mz;
+            }
+        }
+
+        return minMz;
+    }
+
+    /**
+     * Get the maximum precursor charge for peptide with highest ratio
+     *
+     * @param source clustering file cluster
+     * @return maximum precursor charge
+     */
+    public static int getMaxPrecursorChargeForHighRatioPeptide(ClusteringFileCluster source) {
+        int maxCharge = Integer.MIN_VALUE;
+        String maxSequence = source.getMaxSequence();
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            boolean match = containMaxSequence(maxSequence, spectrumReference);
+
+            if (match) {
+                int charge = spectrumReference.getCharge();
+                if (charge > maxCharge) {
+                    maxCharge = charge;
+                }
+            }
+        }
+
+        return maxCharge;
+    }
+
+    /**
+     * Get the minimum precursor charge for peptide with highest ratio
+     *
+     * @param source clustering file cluster
+     * @return minimum precursor charge
+     */
+    public static int getMinPrecursorChargeForHighRatioPeptide(ClusteringFileCluster source) {
+        int minCharge = Integer.MAX_VALUE;
+        String maxSequence = source.getMaxSequence();
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            boolean match = containMaxSequence(maxSequence, spectrumReference);
+
+            if (match) {
+                int charge = spectrumReference.getCharge();
+                if (charge < minCharge) {
+                    minCharge = charge;
+                }
+            }
+        }
+
+        return minCharge;
+    }
+
+
+    /**
+     * Get the maximum precursor m/z for peptide with the highest ratio
+     *
+     * @param source clustering file cluster
+     * @return maximum precursor m/z
+     */
+    public static float getMaxPrecursorMzForHighRatioPeptide(ClusteringFileCluster source) {
+        float maxMz = Float.MIN_VALUE;
+        String maxSequence = source.getMaxSequence();
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            boolean match = containMaxSequence(maxSequence, spectrumReference);
+
+            if (match) {
+                float mz = spectrumReference.getPrecursorMz();
+                if (mz > maxMz) {
+                    maxMz = mz;
+                }
+            }
+        }
+
+        return maxMz;
+    }
+
+    /**
+     * Get the minimum precursor m/z for peptide with the highest ratio
+     *
+     * @param source clustering file cluster
+     * @return minimum precursor m/z
+     */
+    public static float getMinPrecursorMzForHighRatioPeptide(ClusteringFileCluster source) {
+        float minMz = Float.MAX_VALUE;
+        String maxSequence = source.getMaxSequence();
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            boolean match = containMaxSequence(maxSequence, spectrumReference);
+
+            if (match) {
+                float mz = spectrumReference.getPrecursorMz();
+                if (mz < minMz) {
+                    minMz = mz;
+                }
+            }
+        }
+
+        return minMz;
     }
 
     /**
@@ -99,39 +322,6 @@ public final class ClusteringFileClusterUtils {
         return sequenceCounts.get(0).getCount() == sequenceCounts.get(1).getCount();
     }
 
-    /**
-     * Get the number of species on peptide sequence with highest ratio
-     *
-     * @param source clustering file cluster
-     * @return number of species
-     */
-    public static int getNumberOfSpeciesOnPeptideWithHighRatio(ClusteringFileCluster source) {
-        Set<String> species = new HashSet<>();
-        String maxSequence = source.getMaxSequence();
-
-        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
-            List<IPeptideSpectrumMatch> psms = spectrumReference.getPSMs();
-            boolean match = false;
-            for (IPeptideSpectrumMatch psm : psms) {
-                if (psm.getSequence().equals(maxSequence)) {
-                    match = true;
-                    break;
-                }
-            }
-
-            if (match) {
-                String specs = spectrumReference.getSpecies();
-                if (specs != null) {
-                    String[] specsParts = specs.split(",");
-                    species.addAll(Arrays.asList(specsParts));
-                }
-            }
-        }
-
-        return species.size();
-
-    }
-
 
     /**
      * Get the number of species
@@ -145,8 +335,9 @@ public final class ClusteringFileClusterUtils {
 
     /**
      * Get all the species within a cluster
-     * @param source    clustering file cluster
-     * @return  species
+     *
+     * @param source clustering file cluster
+     * @return species
      */
     public static Set<String> getSpecies(ClusteringFileCluster source) {
         Set<String> species = new HashSet<>();
@@ -163,6 +354,42 @@ public final class ClusteringFileClusterUtils {
     }
 
     /**
+     * Get the number of species on peptide sequence with highest ratio
+     *
+     * @param source clustering file cluster
+     * @return number of species
+     */
+    public static int getNumberOfSpeciesOnPeptideWithHighRatio(ClusteringFileCluster source) {
+        return getSpeciesOnPeptideWithHighRatio(source).size();
+    }
+
+    /**
+     * Get species on peptide with highest ratio
+     *
+     * @param source clustering file cluster
+     * @return a set of species
+     */
+    public static Set<String> getSpeciesOnPeptideWithHighRatio(ClusteringFileCluster source) {
+        Set<String> species = new HashSet<>();
+        String maxSequence = source.getMaxSequence();
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            boolean match = containMaxSequence(maxSequence, spectrumReference);
+
+            if (match) {
+                String specs = spectrumReference.getSpecies();
+                if (specs != null) {
+                    String[] specsParts = specs.split(",");
+                    species.addAll(Arrays.asList(specsParts));
+                }
+            }
+        }
+
+        return species;
+    }
+
+
+    /**
      * Get the number of projects within a cluster
      *
      * @param source clustering file cluster
@@ -174,11 +401,11 @@ public final class ClusteringFileClusterUtils {
 
     /**
      * Get projects within a cluster
-     *
+     * <p/>
      * todo: this information should be explicitly provided in the cluster rather than inferred
      *
-     * @param source    clustering file cluster
-     * @return  a set of project accessions
+     * @param source clustering file cluster
+     * @return a set of project accessions
      */
     public static Set<String> getProjects(ClusteringFileCluster source) {
         Set<String> projects = new HashSet<>();
@@ -192,6 +419,41 @@ public final class ClusteringFileClusterUtils {
         return projects;
     }
 
+    /**
+     * Get the number of projects within a cluster
+     *
+     * @param source clustering file cluster
+     * @return number of projects
+     */
+    public static int getNumberOfProjectsOnPeptideWithHighRatio(ClusteringFileCluster source) {
+        return getProjectsOnPeptideWithHighRatio(source).size();
+    }
+
+
+    /**
+     * Get projects within a cluster
+     * <p/>
+     * todo: this information should be explicitly provided in the cluster rather than inferred
+     *
+     * @param source clustering file cluster
+     * @return a set of project accessions
+     */
+    public static Set<String> getProjectsOnPeptideWithHighRatio(ClusteringFileCluster source) {
+        Set<String> projects = new HashSet<>();
+        String maxSequence = source.getMaxSequence();
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            boolean match = containMaxSequence(maxSequence, spectrumReference);
+
+            if (match) {
+                String spectrumId = spectrumReference.getSpectrumId();
+                String[] spectrumIdParts = spectrumId.split(";");
+                projects.add(spectrumIdParts[0]);
+            }
+        }
+
+        return projects;
+    }
 
     /**
      * Get spectrum ids within a cluster
@@ -209,4 +471,47 @@ public final class ClusteringFileClusterUtils {
 
         return spectrumIds;
     }
+
+    /**
+     * Get spectrum ids within a cluster on the peptide with highest ratio
+     *
+     * @param source clustering file cluster
+     * @return a set of spectrum ids
+     */
+    public static Set<String> getSpectrumIdsOnPeptideWithHighRatio(ClusteringFileCluster source) {
+        Set<String> spectrumIds = new HashSet<>();
+        String maxSequence = source.getMaxSequence();
+
+        for (ISpectrumReference spectrumReference : source.getSpectrumReferences()) {
+            boolean match = containMaxSequence(maxSequence, spectrumReference);
+
+            if (match) {
+                String spectrumId = spectrumReference.getSpectrumId();
+                spectrumIds.add(spectrumId);
+            }
+        }
+
+        return spectrumIds;
+    }
+
+
+    /**
+     * Check whether a spectrum identification contains the peptide with highest ratio
+     *
+     * @param maxSequence       peptide with highest ratio
+     * @param spectrumReference spectrum
+     * @return true means contains the peptide with highest ratio, false otherwise
+     */
+    private static boolean containMaxSequence(String maxSequence, ISpectrumReference spectrumReference) {
+        boolean match = false;
+        List<IPeptideSpectrumMatch> psms = spectrumReference.getPSMs();
+        for (IPeptideSpectrumMatch psm : psms) {
+            if (psm.getSequence().equals(maxSequence)) {
+                match = true;
+                break;
+            }
+        }
+        return match;
+    }
+
 }

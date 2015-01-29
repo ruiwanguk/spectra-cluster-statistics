@@ -6,6 +6,7 @@ import uk.ac.ebi.pride.spectracluster.statistics.stat.ClusterStatistics;
 import uk.ac.ebi.pride.spectracluster.statistics.util.ClusteringFileClusterUtils;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Collect statistics for a given cluster
@@ -19,17 +20,57 @@ public class ClusterStatisticsCollector implements IStatisticsCollector<Clusteri
         ClusterStatistics clusterStatistics = new ClusterStatistics();
 
         // cluster id
-        // todo: cluster id is not provided yet
+        clusterStatistics.setId(source.getId());
 
         // average precursor m/z
         clusterStatistics.setAveragePrecursorMz(source.getAvPrecursorMz());
 
+        // average precursor m/z on peptides with highest ratio
+        float averagePrecursorMzForHighRatioPeptide = ClusteringFileClusterUtils.getAveragePrecursorMzForHighRatioPeptide(source);
+        clusterStatistics.setAveragePrecursorMzWithHighestRatio(averagePrecursorMzForHighRatioPeptide);
+
         // average precursor charge
-        float averagePrecursorCharge = ClusteringFileClusterUtils.getAveragePrecursorCharge(source);
+        int averagePrecursorCharge = ClusteringFileClusterUtils.getAveragePrecursorCharge(source);
         clusterStatistics.setAveragePrecursorCharge(averagePrecursorCharge);
+
+        // average precursor charge on peptides with highest ratio
+        int averagePrecursorChargeForHighRatioPeptide = ClusteringFileClusterUtils.getAveragePrecursorChargeForHighRatioPeptide(source);
+        clusterStatistics.setAveragePrecursorChargeWithHighestRatio(averagePrecursorChargeForHighRatioPeptide);
+
+        // maximum precursor charge
+        int maxPrecursorCharge = ClusteringFileClusterUtils.getMaxPrecursorCharge(source);
+        clusterStatistics.setMaxPrecursorCharge(maxPrecursorCharge);
+
+        // minimum precursor charge
+        int minPrecursorCharge = ClusteringFileClusterUtils.getMinPrecursorCharge(source);
+        clusterStatistics.setMinPrecursorCharge(minPrecursorCharge);
+
+        // maximum precursor charge on peptides with highest ratio
+        int maxPrecursorChargeForHighRatioPeptide = ClusteringFileClusterUtils.getMaxPrecursorChargeForHighRatioPeptide(source);
+        clusterStatistics.setMaxPrecursorChargeWithHighestRatio(maxPrecursorChargeForHighRatioPeptide);
+
+        // minimum precursor charge on peptides with highest ratio
+        int minPrecursorChargeForHighRatioPeptide = ClusteringFileClusterUtils.getMinPrecursorChargeForHighRatioPeptide(source);
+        clusterStatistics.setMinPrecursorChargeWithHighestRatio(minPrecursorChargeForHighRatioPeptide);
+
+        // maximum precursor m/z
+        float maxPrecursorMz = ClusteringFileClusterUtils.getMaxPrecursorMz(source);
+        clusterStatistics.setMaxPrecursorMz(maxPrecursorMz);
+
+        // minimum precursor m/z
+        float minPrecursorMz = ClusteringFileClusterUtils.getMinPrecursorMz(source);
+        clusterStatistics.setMinPrecursorMz(minPrecursorMz);
 
         // precursor m/z range
         clusterStatistics.setPrecursorMzRange(source.getSpectrumPrecursorMzRange());
+
+        // maximum precursor charge on peptides with highest ratio
+        float maxPrecursorMzForHighRatioPeptide = ClusteringFileClusterUtils.getMaxPrecursorMzForHighRatioPeptide(source);
+        clusterStatistics.setMaxPrecursorMzWithHighestRatio(maxPrecursorMzForHighRatioPeptide);
+
+        // minimum precursor charge on peptides with highest ratio
+        float minPrecursorMzForHighRatioPeptide = ClusteringFileClusterUtils.getMinPrecursorMzForHighRatioPeptide(source);
+        clusterStatistics.setMinPrecursorMzWithHighestRatio(minPrecursorMzForHighRatioPeptide);
 
         // precursor m/z range on peptide with highest ratio
         float precursorMzRangeForHighRatioPeptide = ClusteringFileClusterUtils.getPrecursorMzRangeForHighRatioPeptide(source);
@@ -43,12 +84,13 @@ public class ClusterStatisticsCollector implements IStatisticsCollector<Clusteri
         int specCount = source.getSpecCount();
         clusterStatistics.setNumberOfSpectra(specCount);
 
-        // Number of assays
-        // todo: assay accessions not provided yet
+        // projects
+        Set<String> projects = ClusteringFileClusterUtils.getProjects(source);
+        clusterStatistics.setProjects(projects);
 
-        // Number of projects
-        int numberOfProject = ClusteringFileClusterUtils.getNumberOfProjects(source);
-        clusterStatistics.setNumberOfProjects(numberOfProject);
+        // projects on peptide with highest ratio
+        Set<String> projectsOnPeptideWithHighRatio = ClusteringFileClusterUtils.getProjectsOnPeptideWithHighRatio(source);
+        clusterStatistics.setProjectOnPeptideWithHighestRatio(projectsOnPeptideWithHighRatio);
 
         // Number of distinct peptide sequences
         List<SequenceCount> sequenceCounts = source.getSequenceCounts();
@@ -58,13 +100,13 @@ public class ClusterStatisticsCollector implements IStatisticsCollector<Clusteri
         int numberOfPSMs = source.getPsmCount();
         clusterStatistics.setNumberOfPsms(numberOfPSMs);
 
-        // Number of species
-        int numberOfSpecies = ClusteringFileClusterUtils.getNumberOfSpecies(source);
-        clusterStatistics.setNumberOfSpecies(numberOfSpecies);
+        // species
+        Set<String> species = ClusteringFileClusterUtils.getSpecies(source);
+        clusterStatistics.setSpeciesInTaxonomyId(species);
 
-        // Number of species on peptide with highest ratio
-        int numberOfSpeciesWithHighestRatio = ClusteringFileClusterUtils.getNumberOfSpeciesOnPeptideWithHighRatio(source);
-        clusterStatistics.setNumberOfSpeciesOnPeptideWithHighestRatio(numberOfSpeciesWithHighestRatio);
+        // species on peptides with highest ratio
+        Set<String> speciesForHighRatioPeptide = ClusteringFileClusterUtils.getSpeciesOnPeptideWithHighRatio(source);
+        clusterStatistics.setSpeciesOnPeptideWithHighestRatioInTaxonomyId(speciesForHighRatioPeptide);
 
         // highest ratio
         float maxRatio = source.getMaxRatio();
@@ -76,6 +118,4 @@ public class ClusterStatisticsCollector implements IStatisticsCollector<Clusteri
 
         return clusterStatistics;
     }
-
-
 }
