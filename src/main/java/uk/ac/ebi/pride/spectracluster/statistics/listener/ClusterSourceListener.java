@@ -7,6 +7,7 @@ import uk.ac.ebi.pride.spectracluster.statistics.collect.ClusterStatisticsCollec
 import uk.ac.ebi.pride.spectracluster.statistics.collect.OverallClusterStatisticsCollector;
 import uk.ac.ebi.pride.spectracluster.statistics.report.ClusterStatisticsReporter;
 import uk.ac.ebi.pride.spectracluster.statistics.stat.ClusterStatistics;
+import uk.ac.ebi.pride.spectracluster.util.predicate.IPredicate;
 
 /**
  * Listener for incoming clusters
@@ -19,21 +20,29 @@ public class ClusterSourceListener implements IClusterSourceListener {
     private final ClusterStatisticsCollector clusterStatisticsCollector;
     private final OverallClusterStatisticsCollector overallClusterStatisticsCollector;
     private final ClusterStatisticsReporter clusterStatisticsReporter;
+    private final IPredicate<ClusterStatistics> clusterFilter;
 
     public ClusterSourceListener(ClusterStatisticsCollector clusterStatisticsCollector,
                                  OverallClusterStatisticsCollector overallClusterStatisticsCollector,
-                                 ClusterStatisticsReporter clusterStatisticsReporter) {
+                                 ClusterStatisticsReporter clusterStatisticsReporter,
+                                 IPredicate<ClusterStatistics> clusterFilter) {
 
         this.clusterStatisticsCollector = clusterStatisticsCollector;
         this.overallClusterStatisticsCollector = overallClusterStatisticsCollector;
         this.clusterStatisticsReporter = clusterStatisticsReporter;
+        this.clusterFilter = clusterFilter;
     }
 
     @Override
     public void onNewClusterRead(ICluster newCluster) {
         ClusterStatistics clusterStatistics = clusterStatisticsCollector.collect((ClusteringFileCluster) newCluster);
-        overallClusterStatisticsCollector.collect((ClusteringFileCluster) newCluster);
 
-        clusterStatisticsReporter.report(clusterStatistics);
+        if (clusterFilter.apply(clusterStatistics)) {
+            // update overall statistics
+            overallClusterStatisticsCollector.collect((ClusteringFileCluster) newCluster);
+
+            // report statistics for a single cluster
+            clusterStatisticsReporter.report(clusterStatistics);
+        }
     }
 }

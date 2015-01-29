@@ -8,10 +8,13 @@ import uk.ac.ebi.pride.spectracluster.statistics.collect.OverallClusterStatistic
 import uk.ac.ebi.pride.spectracluster.statistics.io.ClusteringFileFilter;
 import uk.ac.ebi.pride.spectracluster.statistics.io.ClusteringFileParsingExecutable;
 import uk.ac.ebi.pride.spectracluster.statistics.listener.ClusterSourceListener;
+import uk.ac.ebi.pride.spectracluster.statistics.predicate.PeptideSequencePredicate;
 import uk.ac.ebi.pride.spectracluster.statistics.report.ClusterStatisticsHeaderReporter;
 import uk.ac.ebi.pride.spectracluster.statistics.report.ClusterStatisticsReporter;
 import uk.ac.ebi.pride.spectracluster.statistics.report.OverallStatisticsReporter;
+import uk.ac.ebi.pride.spectracluster.statistics.stat.ClusterStatistics;
 import uk.ac.ebi.pride.spectracluster.statistics.stat.OverallClusterStatistics;
+import uk.ac.ebi.pride.spectracluster.util.predicate.IPredicate;
 
 import java.io.*;
 import java.util.Arrays;
@@ -33,23 +36,20 @@ public class ClusterStatisticsRunner {
     // fixed sized thread pool that run 10 threads at a time
     private final ExecutorService threadPool = Executors.newFixedThreadPool(20);
 
-    private final ClusterStatisticsCollector clusterStatisticsCollector;
     private final OverallClusterStatisticsCollector overallClusterStatisticsCollector;
-    private final ClusterStatisticsReporter clusterStatisticsReporter;
     private final OverallStatisticsReporter overallStatisticsReporter;
     private final ClusterSourceListener clusterSourceListener;
 
     public ClusterStatisticsRunner(ClusterStatisticsCollector clusterStatisticsCollector,
                                    OverallClusterStatisticsCollector overallClusterStatisticsCollector,
                                    ClusterStatisticsReporter clusterStatisticsReporter,
-                                   OverallStatisticsReporter overallStatisticsReporter) {
+                                   OverallStatisticsReporter overallStatisticsReporter,
+                                   IPredicate<ClusterStatistics> clusterFilter) {
 
-        this.clusterStatisticsCollector = clusterStatisticsCollector;
         this.overallClusterStatisticsCollector = overallClusterStatisticsCollector;
-        this.clusterStatisticsReporter = clusterStatisticsReporter;
         this.overallStatisticsReporter = overallStatisticsReporter;
-        this.clusterSourceListener = new ClusterSourceListener(this.clusterStatisticsCollector,
-                                                this.overallClusterStatisticsCollector, this.clusterStatisticsReporter);
+        this.clusterSourceListener = new ClusterSourceListener(clusterStatisticsCollector,
+                                                this.overallClusterStatisticsCollector, clusterStatisticsReporter, clusterFilter);
     }
 
     public void run(List<File> clusteringFiles) {
@@ -116,8 +116,11 @@ public class ClusterStatisticsRunner {
             // write out header
             clusterStatisticsHeaderReporter.report(null);
 
+            // add peptide sequence filter
+            PeptideSequencePredicate peptideSequencePredicate = new PeptideSequencePredicate();
+
             ClusterStatisticsRunner clusterStatisticsRunner = new ClusterStatisticsRunner(clusterStatisticsCollector,
-                    overallClusterStatisticsCollector, clusterStatisticsReporter, overallStatisticsReporter);
+                    overallClusterStatisticsCollector, clusterStatisticsReporter, overallStatisticsReporter, peptideSequencePredicate);
 
             clusterStatisticsRunner.run(Arrays.asList(clusteringFiles));
 
