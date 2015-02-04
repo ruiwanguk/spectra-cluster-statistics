@@ -8,6 +8,7 @@ import uk.ac.ebi.pride.spectracluster.statistics.collect.OverallClusterStatistic
 import uk.ac.ebi.pride.spectracluster.statistics.io.ClusteringFileFilter;
 import uk.ac.ebi.pride.spectracluster.statistics.io.ClusteringFileParsingExecutable;
 import uk.ac.ebi.pride.spectracluster.statistics.listener.ClusterSourceListener;
+import uk.ac.ebi.pride.spectracluster.statistics.predicate.NumberOfSpectraPredicate;
 import uk.ac.ebi.pride.spectracluster.statistics.predicate.PeptideSequencePredicate;
 import uk.ac.ebi.pride.spectracluster.statistics.report.ClusterStatisticsHeaderReporter;
 import uk.ac.ebi.pride.spectracluster.statistics.report.ClusterStatisticsReporter;
@@ -15,6 +16,7 @@ import uk.ac.ebi.pride.spectracluster.statistics.report.OverallStatisticsReporte
 import uk.ac.ebi.pride.spectracluster.statistics.stat.ClusterStatistics;
 import uk.ac.ebi.pride.spectracluster.statistics.stat.OverallClusterStatistics;
 import uk.ac.ebi.pride.spectracluster.util.predicate.IPredicate;
+import uk.ac.ebi.pride.spectracluster.util.predicate.Predicates;
 
 import java.io.*;
 import java.util.Arrays;
@@ -119,8 +121,13 @@ public class ClusterStatisticsRunner {
             // add peptide sequence filter
             PeptideSequencePredicate peptideSequencePredicate = new PeptideSequencePredicate();
 
+            // add number of spectra filter
+            NumberOfSpectraPredicate numberOfSpectraPredicate = new NumberOfSpectraPredicate(10);
+
+            IPredicate<ClusterStatistics> predicate = Predicates.and(peptideSequencePredicate, numberOfSpectraPredicate);
+
             ClusterStatisticsRunner clusterStatisticsRunner = new ClusterStatisticsRunner(clusterStatisticsCollector,
-                    overallClusterStatisticsCollector, clusterStatisticsReporter, overallStatisticsReporter, peptideSequencePredicate);
+                    overallClusterStatisticsCollector, clusterStatisticsReporter, overallStatisticsReporter, predicate);
 
             clusterStatisticsRunner.run(Arrays.asList(clusteringFiles));
 

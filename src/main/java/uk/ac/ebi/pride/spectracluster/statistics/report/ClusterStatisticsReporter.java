@@ -23,7 +23,7 @@ public class ClusterStatisticsReporter implements IStatisticsReporter<ClusterSta
      * NOTE: The order of this enumeration is important, please keep the order in accordance of the output content
      */
     public static enum HEADER {
-        ID ("ID", "Cluster ID"),
+        ID ("CLUSTER_ID", "Cluster ID"),
         AVG_PRECURSOR_MZ("AVG_PMZ", "Average precursor m/z for the cluster"),
         AVG_PRECURSOR_MZ_HIGHEST("AVG_PMZ_HIGHEST", "Average precursor m/z for spectra with highest peptide identification ratio in the cluster"),
         AVG_PRECURSOR_CHARGE("AVG_PCHARGE", "Average precursor charge for the cluster"),
@@ -38,17 +38,17 @@ public class ClusterStatisticsReporter implements IStatisticsReporter<ClusterSta
         MAX_PRECURSOR_MZ_HIGHEST("MAX_PMZ_HIGHEST", "Maximum precursor m/z for spectra with highest peptide identification ratio in the cluster"),
         MIN_PRECURSOR_MZ_HIGHEST("MIN_PMZ_HIGHEST", "Minimum precursor m/z for spectra with highest peptide identification ratio in the cluster"),
         PRECURSOR_MZ_RANGE_HIGHEST("PMZ_RANGE_HIGHEST", "The range of the precursor m/z for the spectra with highest peptide identification ratio in the cluster, it represents the difference between the lowest precursor m/z and the highest precursor m/z"),
-        NUMBER_OF_SPECTRA("#SPECTRUM", "Total number of spectra within the cluster"),
-        NUMBER_OF_PROJECTS("#PROJECT", "Total number of COMPLETE projects from PRIDE Archive within the cluster"),
+        NUMBER_OF_SPECTRA("NUM_SPECTRA", "Total number of spectra within the cluster"),
+        NUMBER_OF_PROJECTS("NUM_PROJECTS", "Total number of COMPLETE projects from PRIDE Archive within the cluster"),
         PROJECT("PROJECT", "Project accessions from PRIDE Archive, separated by semicolon"),
-        NUMBER_OF_PROJECTS_HIGHEST("#PROJECT_HIGHEST", "Total number of COMPLETE projects from PRIDE Archive for spectra with highest peptide identification ratio within the cluster"),
+        NUMBER_OF_PROJECTS_HIGHEST("NUM_PROJECTS_HIGHEST", "Total number of COMPLETE projects from PRIDE Archive for spectra with highest peptide identification ratio within the cluster"),
         PROJECT_HIGHEST("PROJECT_HIGHEST", "Project accessions from PRIDE Archive for spectra with highest peptide identification ratio, separated by semicolon"),
         MULTI_HIGHEST_PEPTIDES("MULTI_HIGHEST", "Boolean indicates whether there are multiple peptides that have the highest ratios"),
-        NUMBER_OF_DISTINCT_PEPTIDES("#PEPTIDE", "Total number of unique peptide sequences within the cluster"),
-        NUMBER_OF_PSMS("#PSM", "Total number of PSMs within the cluster"),
-        NUMBER_OF_SPECIES("#SPECIES", "Total number of species within the cluster"),
+        NUMBER_OF_DISTINCT_PEPTIDES("NUM_PEPTIDES", "Total number of unique peptide sequences within the cluster"),
+        NUMBER_OF_PSMS("NUM_PSMS", "Total number of PSMs within the cluster"),
+        NUMBER_OF_SPECIES("NUM_SPECIES", "Total number of species within the cluster"),
         SPECIES("SPECIES", "Species within the cluster in taxonomy ID, separated by semicolon."),
-        NUMBER_OF_SPECIES_HIGHEST("#SPECIES_HIGHEST", "Total number of species for peptides that have the highest ratios within the cluster"),
+        NUMBER_OF_SPECIES_HIGHEST("NUM_SPECIES_HIGHEST", "Total number of species for peptides that have the highest ratios within the cluster"),
         SPECIES_HIGHEST("SPECIES_HIGHEST", "Species for peptides that have the highest ratios within the cluster, in taxonomy ID, separated by semicolon."),
         MAX_RATIO("MAX_RATIO", "The highest ratio within the cluster"),
         PEPTIDE_HIGHEST("PEP_SEQ", "The peptide sequence for the peptide with the highest ratio within the cluster");
@@ -171,6 +171,10 @@ public class ClusterStatisticsReporter implements IStatisticsReporter<ClusterSta
 
         // peptide sequence with highest ratio
         appendObject(line, stats.getPeptideSequenceWithHighestRatio());
+
+
+        // remove the last tab
+        line = line.delete(line.length() - 1, line.length());
 
         // write out the statistics
         output(line);

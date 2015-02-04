@@ -28,8 +28,11 @@ public class ClusterStatisticsHeaderReporter implements IStatisticsReporter<Void
             headers.append(header.getHeader()).append("\t");
         }
 
+        headers.delete(headers.length() - 1, headers.length());
+
         try {
-            output.append(headers.toString()).append("\n");
+            String headerStr = headers.toString();
+            output.append(headerStr).append("\n");
         } catch (IOException e) {
             String msg = "Failed to write cluster statistics headers";
             logger.error(msg, e);

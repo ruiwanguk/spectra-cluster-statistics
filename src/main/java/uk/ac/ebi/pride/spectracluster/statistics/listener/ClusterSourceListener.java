@@ -1,7 +1,5 @@
 package uk.ac.ebi.pride.spectracluster.statistics.listener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import uk.ac.ebi.pride.spectracluster.clusteringfilereader.io.IClusterSourceListener;
 import uk.ac.ebi.pride.spectracluster.clusteringfilereader.objects.ClusteringFileCluster;
 import uk.ac.ebi.pride.spectracluster.clusteringfilereader.objects.ICluster;
@@ -18,8 +16,6 @@ import uk.ac.ebi.pride.spectracluster.util.predicate.IPredicate;
  * @version $Id$
  */
 public class ClusterSourceListener implements IClusterSourceListener {
-
-    private static final Logger logger = LoggerFactory.getLogger(ClusterSourceListener.class);
 
     private final ClusterStatisticsCollector clusterStatisticsCollector;
     private final OverallClusterStatisticsCollector overallClusterStatisticsCollector;
@@ -47,9 +43,6 @@ public class ClusterSourceListener implements IClusterSourceListener {
 
             // report statistics for a single cluster
             clusterStatisticsReporter.report(clusterStatistics);
-        } else {
-            logger.warn("Cluster {} failed filter: {}", clusterStatistics.getId(), clusterStatistics.getPeptideSequenceWithHighestRatio());
         }
-
     }
 }
