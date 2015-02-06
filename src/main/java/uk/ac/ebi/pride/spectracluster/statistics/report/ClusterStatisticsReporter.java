@@ -51,7 +51,8 @@ public class ClusterStatisticsReporter implements IStatisticsReporter<ClusterSta
         NUMBER_OF_SPECIES_HIGHEST("NUM_SPECIES_HIGHEST", "Total number of species for peptides that have the highest ratios within the cluster"),
         SPECIES_HIGHEST("SPECIES_HIGHEST", "Species for peptides that have the highest ratios within the cluster, in taxonomy ID, separated by semicolon."),
         MAX_RATIO("MAX_RATIO", "The highest ratio within the cluster"),
-        PEPTIDE_HIGHEST("PEP_SEQ", "The peptide sequence for the peptide with the highest ratio within the cluster");
+        PEPTIDE_HIGHEST("PEP_SEQ", "The peptide sequence for the peptide with the highest ratio within the cluster"),
+        FILE_NAME("FILE_NAME", "The original clustering result file that contains this cluster");
 
         String header;
         String description;
@@ -172,6 +173,8 @@ public class ClusterStatisticsReporter implements IStatisticsReporter<ClusterSta
         // peptide sequence with highest ratio
         appendObject(line, stats.getPeptideSequenceWithHighestRatio());
 
+        // clustering file name
+        appendObject(line, stats.getFileName());
 
         // remove the last tab
         line = line.delete(line.length() - 1, line.length());

@@ -116,6 +116,9 @@ public class ClusterStatisticsCollector implements IStatisticsCollector<Clusteri
         String maxSequence = source.getMaxSequence();
         clusterStatistics.setPeptideSequenceWithHighestRatio(maxSequence);
 
+        // file name
+        clusterStatistics.setFileName(source.getFileName());
+
         return clusterStatistics;
     }
 }

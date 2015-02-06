@@ -63,6 +63,8 @@ public class ClusterStatistics {
 
     private String peptideSequenceWithHighestRatio;
 
+    private String fileName;
+
     public String getId() {
         return id;
     }
@@ -261,5 +263,13 @@ public class ClusterStatistics {
 
     public void setProjectOnPeptideWithHighestRatio(Set<String> projectOnPeptideWithHighestRatio) {
         this.projectOnPeptideWithHighestRatio = new LinkedHashSet<>(projectOnPeptideWithHighestRatio);
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }
