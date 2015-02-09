@@ -22,6 +22,9 @@ public class OverallStatisticsReporter implements IStatisticsReporter<OverallClu
     @Override
     public void report(final OverallClusterStatistics stats) {
         try {
+            // header
+            appendItem("TYPE", "VALUE");
+
             // number of cluster
             long numberOfClusters = stats.getNumberOfClusters();
             appendItem("Number of clusters:", numberOfClusters + "");
@@ -97,8 +100,8 @@ public class OverallStatisticsReporter implements IStatisticsReporter<OverallClu
 
     private void appendItem(String name, String value) throws IOException {
         output.append(name);
-        output.append("\n");
+        output.append("\t");
         output.append(value);
-        output.append("\n\n");
+        output.append("\n");
     }
 }
