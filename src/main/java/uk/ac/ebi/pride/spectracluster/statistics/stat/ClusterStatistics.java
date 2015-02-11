@@ -65,6 +65,39 @@ public class ClusterStatistics {
 
     private String fileName;
 
+    public ClusterStatistics() {
+    }
+
+    public ClusterStatistics(ClusterStatistics cluster) {
+        this.setId(cluster.getId());
+        this.setAveragePrecursorMz(cluster.getAveragePrecursorMz());
+        this.setAveragePrecursorMzWithHighestRatio(cluster.getAveragePrecursorMzWithHighestRatio());
+        this.setAveragePrecursorCharge(cluster.getAveragePrecursorCharge());
+        this.setAveragePrecursorChargeWithHighestRatio(cluster.getAveragePrecursorChargeWithHighestRatio());
+        this.setMaxPrecursorCharge(cluster.getMaxPrecursorCharge());
+        this.setMinPrecursorCharge(cluster.getMinPrecursorCharge());
+        this.setMaxPrecursorChargeWithHighestRatio(cluster.getMaxPrecursorChargeWithHighestRatio());
+        this.setMinPrecursorChargeWithHighestRatio(cluster.getMinPrecursorChargeWithHighestRatio());
+        this.setMaxPrecursorMz(cluster.getMaxPrecursorMz());
+        this.setMinPrecursorMz(cluster.getMinPrecursorMz());
+        this.setPrecursorMzRange(cluster.getPrecursorMzRange());
+        this.setMaxPrecursorMzWithHighestRatio(cluster.getMaxPrecursorMzWithHighestRatio());
+        this.setMinPrecursorMzWithHighestRatio(cluster.getMinPrecursorMzWithHighestRatio());
+        this.setPrecursorMzRangeOnPeptideWithHighestRatio(cluster.getPrecursorMzRangeOnPeptideWithHighestRatio());
+        this.setNumberOfSpectra(cluster.getNumberOfSpectra());
+        this.setProjects(cluster.getProjects());
+        this.setProjectOnPeptideWithHighestRatio(cluster.getProjectOnPeptideWithHighestRatio());
+        this.setMultipleHighRankingPeptideSequences(cluster.isMultipleHighRankingPeptideSequences());
+        this.setNumberOfDistinctPeptideSequences(cluster.getNumberOfDistinctPeptideSequences());
+        this.setNumberOfPsms(cluster.getNumberOfPsms());
+        this.setSpeciesInTaxonomyId(cluster.getSpeciesInTaxonomyId());
+        this.setSpeciesOnPeptideWithHighestRatioInTaxonomyId(cluster.getSpeciesOnPeptideWithHighestRatioInTaxonomyId());
+        this.setHighestRatio(cluster.getHighestRatio());
+        this.setPeptideSequenceWithHighestRatio(cluster.getPeptideSequenceWithHighestRatio());
+        this.setFileName(cluster.getFileName());
+    }
+
+
     public String getId() {
         return id;
     }

@@ -5,16 +5,19 @@ import org.slf4j.LoggerFactory;
 import uk.ac.ebi.pride.spectracluster.clusteringfilereader.io.IClusterSourceListener;
 import uk.ac.ebi.pride.spectracluster.statistics.collect.ClusterStatisticsCollector;
 import uk.ac.ebi.pride.spectracluster.statistics.collect.OverallClusterStatisticsCollector;
+import uk.ac.ebi.pride.spectracluster.statistics.function.IllegalSpeciesFunction;
 import uk.ac.ebi.pride.spectracluster.statistics.io.ClusteringFileFilter;
 import uk.ac.ebi.pride.spectracluster.statistics.io.ClusteringFileParsingExecutable;
 import uk.ac.ebi.pride.spectracluster.statistics.listener.ClusterSourceListener;
 import uk.ac.ebi.pride.spectracluster.statistics.predicate.NumberOfSpectraPredicate;
+import uk.ac.ebi.pride.spectracluster.statistics.predicate.PeptideSequenceLengthPredicate;
 import uk.ac.ebi.pride.spectracluster.statistics.predicate.PeptideSequencePredicate;
 import uk.ac.ebi.pride.spectracluster.statistics.report.ClusterStatisticsHeaderReporter;
 import uk.ac.ebi.pride.spectracluster.statistics.report.ClusterStatisticsReporter;
 import uk.ac.ebi.pride.spectracluster.statistics.report.OverallStatisticsReporter;
 import uk.ac.ebi.pride.spectracluster.statistics.stat.ClusterStatistics;
 import uk.ac.ebi.pride.spectracluster.statistics.stat.OverallClusterStatistics;
+import uk.ac.ebi.pride.spectracluster.util.function.IFunction;
 import uk.ac.ebi.pride.spectracluster.util.predicate.IPredicate;
 import uk.ac.ebi.pride.spectracluster.util.predicate.Predicates;
 
@@ -46,12 +49,13 @@ public class ClusterStatisticsRunner {
                                    OverallClusterStatisticsCollector overallClusterStatisticsCollector,
                                    ClusterStatisticsReporter clusterStatisticsReporter,
                                    OverallStatisticsReporter overallStatisticsReporter,
-                                   IPredicate<ClusterStatistics> clusterFilter) {
+                                   IPredicate<ClusterStatistics> clusterFilter,
+                                   IFunction<ClusterStatistics, ClusterStatistics> clusterFunction) {
 
         this.overallClusterStatisticsCollector = overallClusterStatisticsCollector;
         this.overallStatisticsReporter = overallStatisticsReporter;
         this.clusterSourceListener = new ClusterSourceListener(clusterStatisticsCollector,
-                                                this.overallClusterStatisticsCollector, clusterStatisticsReporter, clusterFilter);
+                this.overallClusterStatisticsCollector, clusterStatisticsReporter, clusterFilter, clusterFunction);
     }
 
     public void run(List<File> clusteringFiles) {
@@ -124,10 +128,16 @@ public class ClusterStatisticsRunner {
             // add number of spectra filter
             NumberOfSpectraPredicate numberOfSpectraPredicate = new NumberOfSpectraPredicate(10);
 
-            IPredicate<ClusterStatistics> predicate = Predicates.and(peptideSequencePredicate, numberOfSpectraPredicate);
+            // short peptide sequence filter
+            PeptideSequenceLengthPredicate peptideSequenceLengthPredicate = new PeptideSequenceLengthPredicate();
+
+            IPredicate<ClusterStatistics> predicate = Predicates.and(peptideSequencePredicate, peptideSequenceLengthPredicate, numberOfSpectraPredicate);
+
+            // function to clean species
+            IllegalSpeciesFunction illegalSpeciesFunction = new IllegalSpeciesFunction();
 
             ClusterStatisticsRunner clusterStatisticsRunner = new ClusterStatisticsRunner(clusterStatisticsCollector,
-                    overallClusterStatisticsCollector, clusterStatisticsReporter, overallStatisticsReporter, predicate);
+                    overallClusterStatisticsCollector, clusterStatisticsReporter, overallStatisticsReporter, predicate, illegalSpeciesFunction);
 
             clusterStatisticsRunner.run(Arrays.asList(clusteringFiles));
 

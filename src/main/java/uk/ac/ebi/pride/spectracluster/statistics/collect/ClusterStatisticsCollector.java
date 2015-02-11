@@ -15,6 +15,7 @@ import java.util.Set;
  * @version $Id$
  */
 public class ClusterStatisticsCollector implements IStatisticsCollector<ClusteringFileCluster, ClusterStatistics> {
+
     @Override
     public ClusterStatistics collect(ClusteringFileCluster source) {
         ClusterStatistics clusterStatistics = new ClusterStatistics();
