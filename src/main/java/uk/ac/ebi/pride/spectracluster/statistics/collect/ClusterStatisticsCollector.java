@@ -5,7 +5,9 @@ import uk.ac.ebi.pride.spectracluster.clusteringfilereader.objects.SequenceCount
 import uk.ac.ebi.pride.spectracluster.statistics.stat.ClusterStatistics;
 import uk.ac.ebi.pride.spectracluster.statistics.util.ClusteringFileClusterUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -117,8 +119,32 @@ public class ClusterStatisticsCollector implements IStatisticsCollector<Clusteri
         String maxSequence = source.getMaxSequence();
         clusterStatistics.setPeptideSequenceWithHighestRatio(maxSequence);
 
+
         // file name
         clusterStatistics.setFileName(source.getFileName());
+
+        Map<String, Integer> peptides = source.getPsmSequenceCounts();
+
+        Map<String, Integer> sortedPeptides = ClusteringFileClusterUtils.sortByValues(peptides);
+
+        List<String> keys = new ArrayList<String>(sortedPeptides.keySet());
+        clusterStatistics.setPeptideCountWithHighestRatio(sortedPeptides.get(maxSequence));
+
+
+        if(keys.size() > 1 ){
+            clusterStatistics.setSecondPeptideSequenceWithHighestRatio(keys.get(1));
+            clusterStatistics.setSecondPeptideCountWithHighestRatio(peptides.get(keys.get(1)));
+        }
+
+        if(keys.size() > 2 ){
+            clusterStatistics.setThirdPeptideSequenceWithHighestRatio(keys.get(2));
+            clusterStatistics.setThirdPeptideCountWithHighestRatio(sortedPeptides.get(keys.get(2)));
+        }
+
+        if(keys.size() > 3) {
+            clusterStatistics.setFourPeptideSequenceWithHighestRatio(keys.get(3));
+            clusterStatistics.setFourPeptideCountWithHighestRatio(sortedPeptides.get(keys.get(3)));
+        }
 
         return clusterStatistics;
     }
