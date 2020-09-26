@@ -51,7 +51,19 @@ public class ClusterStatisticsReporter implements IStatisticsReporter<ClusterSta
         NUMBER_OF_SPECIES_HIGHEST("NUM_SPECIES_HIGHEST", "Total number of species for peptides that have the highest ratios within the cluster"),
         SPECIES_HIGHEST("SPECIES_HIGHEST", "Species for peptides that have the highest ratios within the cluster, in taxonomy ID, separated by semicolon."),
         MAX_RATIO("MAX_RATIO", "The highest ratio within the cluster"),
+
         PEPTIDE_HIGHEST("PEP_SEQ", "The peptide sequence for the peptide with the highest ratio within the cluster"),
+        PEPTIDE_COUNT_HIGHEST("PEP_COUNT", "The peptide count  for the peptide with the highest ratio within the cluster"),
+
+        PEPTIDE_HIGHEST_SECOND("PEP_SEQ_SECOND", "The peptide sequence for the second peptide with the highest ratio within the cluster"),
+        PEPTIDE_COUNT_HIGHEST_SECOND("PEP_COUNT_SECOND", "The peptide count for the second peptide with the highest ratio within the cluster"),
+
+        PEPTIDE_HIGHEST_THIRD("PEP_SEQ_THIRD", "The peptide sequence for the third peptide with the highest ratio within the cluster"),
+        PEPTIDE_COUNT_HIGHEST_THIRD("PEP_COUNT_THIRD", "The peptide count for the third peptide with the highest ratio within the cluster"),
+
+        PEPTIDE_HIGHEST_FOUR("PEP_SEQ_FOUR", "The peptide sequence for the four peptide with the highest ratio within the cluster"),
+        PEPTIDE_COUNT_HIGHEST_FOUR("PEP_COUNT_FOUR", "The peptide count for the four peptide with the highest ratio within the cluster"),
+
         FILE_NAME("FILE_NAME", "The original clustering result file that contains this cluster");
 
         String header;
@@ -172,6 +184,19 @@ public class ClusterStatisticsReporter implements IStatisticsReporter<ClusterSta
 
         // peptide sequence with highest ratio
         appendObject(line, stats.getPeptideSequenceWithHighestRatio());
+        appendObject(line, stats.getPeptideCountWithHighestRatio());
+
+        //add second sequence
+        appendObject(line, stats.getSecondPeptideSequenceWithHighestRatio());
+        appendObject(line, stats.getSecondPeptideCountWithHighestRatio());
+
+        //add third sequence
+        appendObject(line, stats.getThirdPeptideSequenceWithHighestRatio());
+        appendObject(line, stats.getThirdPeptideCountWithHighestRatio());
+
+        //add four sequence
+        appendObject(line, stats.getFourPeptideSequenceWithHighestRatio());
+        appendObject(line, stats.getFourPeptideCountWithHighestRatio());
 
         // clustering file name
         appendObject(line, stats.getFileName());

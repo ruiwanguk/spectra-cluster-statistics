@@ -63,7 +63,22 @@ public class ClusterStatistics {
 
     private String peptideSequenceWithHighestRatio;
 
+    private Integer peptideCountWithHighestRatio;
+
     private String fileName;
+
+    private String  secondPeptideSequenceWithHighestRatio = null;
+
+    private Integer secondPeptideCountWithHighestRatio = null;
+
+    private String  thirdPeptideSequenceWithHighestRatio = null;
+
+    private Integer thirdPeptideCountWithHighestRatio = null;
+
+    private String  fourPeptideSequenceWithHighestRatio = null;
+
+    private Integer fourPeptideCountWithHighestRatio = null;
+
 
     public ClusterStatistics() {
     }
@@ -93,8 +108,20 @@ public class ClusterStatistics {
         this.setSpeciesInTaxonomyId(cluster.getSpeciesInTaxonomyId());
         this.setSpeciesOnPeptideWithHighestRatioInTaxonomyId(cluster.getSpeciesOnPeptideWithHighestRatioInTaxonomyId());
         this.setHighestRatio(cluster.getHighestRatio());
+
         this.setPeptideSequenceWithHighestRatio(cluster.getPeptideSequenceWithHighestRatio());
+        this.setPeptideCountWithHighestRatio(cluster.getPeptideCountWithHighestRatio());
+
         this.setFileName(cluster.getFileName());
+
+        this.setSecondPeptideSequenceWithHighestRatio(cluster.getSecondPeptideSequenceWithHighestRatio());
+        this.setSecondPeptideCountWithHighestRatio(cluster.getSecondPeptideCountWithHighestRatio());
+
+        this.setThirdPeptideSequenceWithHighestRatio(cluster.getThirdPeptideSequenceWithHighestRatio());
+        this.setThirdPeptideCountWithHighestRatio(cluster.getThirdPeptideCountWithHighestRatio());
+
+        this.setFourPeptideSequenceWithHighestRatio(cluster.getFourPeptideSequenceWithHighestRatio());
+        this.setFourPeptideCountWithHighestRatio(cluster.getFourPeptideCountWithHighestRatio());
     }
 
 
@@ -304,5 +331,61 @@ public class ClusterStatistics {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getSecondPeptideSequenceWithHighestRatio() {
+        return secondPeptideSequenceWithHighestRatio;
+    }
+
+    public void setSecondPeptideSequenceWithHighestRatio(String secondPeptideSequenceWithHighestRatio) {
+        this.secondPeptideSequenceWithHighestRatio = secondPeptideSequenceWithHighestRatio;
+    }
+
+    public String getThirdPeptideSequenceWithHighestRatio() {
+        return thirdPeptideSequenceWithHighestRatio;
+    }
+
+    public void setThirdPeptideSequenceWithHighestRatio(String thirdPeptideSequenceWithHighestRatio) {
+        this.thirdPeptideSequenceWithHighestRatio = thirdPeptideSequenceWithHighestRatio;
+    }
+
+    public String getFourPeptideSequenceWithHighestRatio() {
+        return fourPeptideSequenceWithHighestRatio;
+    }
+
+    public void setFourPeptideSequenceWithHighestRatio(String fourPeptideSequenceWithHighestRatio) {
+        this.fourPeptideSequenceWithHighestRatio = fourPeptideSequenceWithHighestRatio;
+    }
+
+    public Integer getFourPeptideCountWithHighestRatio() {
+        return fourPeptideCountWithHighestRatio;
+    }
+
+    public void setFourPeptideCountWithHighestRatio(Integer fourPeptideCountWithHighestRatio) {
+        this.fourPeptideCountWithHighestRatio = fourPeptideCountWithHighestRatio;
+    }
+
+    public Integer getSecondPeptideCountWithHighestRatio() {
+        return secondPeptideCountWithHighestRatio;
+    }
+
+    public void setSecondPeptideCountWithHighestRatio(Integer secondPeptideCountWithHighestRatio) {
+        this.secondPeptideCountWithHighestRatio = secondPeptideCountWithHighestRatio;
+    }
+
+    public Integer getThirdPeptideCountWithHighestRatio() {
+        return thirdPeptideCountWithHighestRatio;
+    }
+
+    public void setThirdPeptideCountWithHighestRatio(Integer thirdPeptideCountWithHighestRatio) {
+        this.thirdPeptideCountWithHighestRatio = thirdPeptideCountWithHighestRatio;
+    }
+
+    public Integer getPeptideCountWithHighestRatio() {
+        return peptideCountWithHighestRatio;
+    }
+
+    public void setPeptideCountWithHighestRatio(Integer peptideCountWithHighestRatio) {
+        this.peptideCountWithHighestRatio = peptideCountWithHighestRatio;
     }
 }
